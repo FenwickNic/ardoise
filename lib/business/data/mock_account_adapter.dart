@@ -6,7 +6,7 @@ import 'package:ardoise/model/firebase/transaction_log.dart';
 
 class MockAccountAdapter extends IAccountPort{
   @override
-  Future<void> cancelTransfer(FundTransaction transaction) {
+  Future<void> cancelTransfer(String transactionId) {
     // TODO: implement cancelTransfer
     throw UnimplementedError();
   }
@@ -78,7 +78,7 @@ class MockAccountAdapter extends IAccountPort{
   }
 
   @override
-  Future<void> validateTransfer(FundTransaction transaction) {
+  Future<void> validateTransfer(String transactionId) {
     // TODO: implement validateTransfer
     throw UnimplementedError();
   }
@@ -104,6 +104,12 @@ class MockAccountAdapter extends IAccountPort{
   @override
   Future<Account> fetchAccountById(String accountId) {
     // TODO: implement fetchAccountById
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> processTransaction(FundTransaction transaction) {
+    // TODO: implement processTransaction
     throw UnimplementedError();
   }
 

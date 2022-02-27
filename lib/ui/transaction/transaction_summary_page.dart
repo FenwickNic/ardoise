@@ -27,12 +27,12 @@ class TransactionSummaryPage extends StatelessWidget {
                   Text("Veuillez confirmer votre virement", style: Theme.of(context).textTheme.headline6),
                   Divider(),
                   TransactionDetails(transaction: TransactionTileViewModel(
-                      title: transaction.title,
+                    transactionId: "",
+                    title: transaction.title,
                     amount: transaction.amount,
                     accountFrom: transaction.accountFrom.accountName,
                     accountTo: transaction.accountTo.accountName,
                     description: transaction.description,
-                      newBalance: 0
                   )),
                   Divider(height: 30),
                   ElevatedButton(
@@ -54,7 +54,7 @@ class TransactionSummaryPage extends StatelessWidget {
                                 ETransactionApprovalStatus.Paid,
                         );
                         FirebaseAdapter firebaseAdapter = FirebaseAdapter();
-                        firebaseAdapter.transferFunds(fundTransaction).then(
+                        firebaseAdapter.processTransaction(fundTransaction).then(
                             (value) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

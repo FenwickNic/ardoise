@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FundTransaction{
   String documentId = "";
-  String transactionId = "";
   DateTime submissionDate;
   String submittedBy;
   String accountFrom = "";

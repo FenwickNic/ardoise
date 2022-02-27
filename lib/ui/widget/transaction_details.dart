@@ -1,3 +1,4 @@
+import 'package:ardoise/business/data/firebase_adapter.dart';
 import 'package:ardoise/business/presentation/string_adapter.dart';
 import 'package:ardoise/model/viewmodel/transactionlist_viewmodel.dart';
 import 'package:ardoise/ui/transaction/transaction_page_arguments.dart';
@@ -55,6 +56,40 @@ class TransactionDetails extends StatelessWidget {
           Divider(),
           Text("Description", style: Theme.of(context).textTheme.headline6),
           Text(transaction.description),
+          if(transaction.requiresValidation)
+            Row(
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  ),
+
+                  child: const Text('Refuser',
+                    style: TextStyle(
+                        fontSize: 20
+                    ),
+                  ),
+                  onPressed: () async {
+                    FirebaseAdapter _database = FirebaseAdapter();
+                    _database.cancelTransfer(transaction.transactionId);
+                    }
+              ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  ),
+
+                  child: const Text('Accepter',
+                    style: TextStyle(
+                        fontSize: 20
+                    ),
+                  ),
+                  onPressed: () async {
+                    FirebaseAdapter _database = FirebaseAdapter();
+                    _database.validateTransfer(transaction.transactionId);
+              }),
+              ]
+            )
         ]
     );
   }

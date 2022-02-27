@@ -1,3 +1,5 @@
+import 'package:ardoise/model/firebase/enum_transaction_status.dart';
+
 class TransactionListViewModel{
   DateTime date;
   List<TransactionTileViewModel> transactions;
@@ -8,19 +10,25 @@ class TransactionListViewModel{
 }
 
 class TransactionTileViewModel{
+  String transactionId;
   String title;
   String description;
   String accountFrom = "";
   String accountTo = "";
   bool isCredit = false;
   double amount;
-  double newBalance;
+  double? newBalance;
+  bool requiresValidation;
 
   TransactionTileViewModel(
-      {required this.title,
+      {
+        this.transactionId = "",
+        required this.title,
         this.description = '',
         required this.accountFrom,
         required this.accountTo,
         required this.amount,
-        required this.newBalance}) : this.isCredit = (amount >= 0);
+        this.newBalance,
+        this.requiresValidation = false
+      }) : this.isCredit = (amount >= 0);
 }

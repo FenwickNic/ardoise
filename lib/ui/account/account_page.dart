@@ -31,12 +31,6 @@ class _AccountPageState extends State<AccountPage> {
   //Le compte en banque actuel
   Account? _account;
 
-  //Les transactions qui ont été payés
-  Future<List<TransactionListViewModel>>? _paidTransactionList;
-
-  //Les transactions qui sont à valider par l'utilisateur
-  Future<List<FundTransaction>>? _pendingTransactionList;
-
   //Les transactions que l'utilisateur a soumis et sont en attente de paiement.
   Future<List<FundTransaction>>? _submittedTransactionList;
 
@@ -49,8 +43,6 @@ class _AccountPageState extends State<AccountPage> {
     _database.fetchAccountById(widget.accountId)
         .then(
             (value) {
-          _paidTransactionList = PresentationAdapter.fetchTransactionList(value);
-          _pendingTransactionList = _database.fetchPendingTransactionList(value);
           _submittedTransactionList = _database.fetchSubmittedTransactionList(value);
           setState(() {
             _account = value;
@@ -92,12 +84,14 @@ class _AccountPageState extends State<AccountPage> {
                     children: [
                       _buildHeader(context),
                       _buildAccountInfo(),
-                      _buildPendingTransactionList(),
+                      Flexible(
+                          child:
+                          _account == null ? Container() : PendingTransactionList(account: _account!)),
                       Text('Les opérations courantes',
                           style: Theme.of(context).textTheme.headline5
                       ),
                       Flexible(
-                          child: _buildPaidTransactionList()
+                          child: _account == null ? Container() : PaidTransactionList(account: _account!,)
                       )
                     ]
                 )
@@ -143,7 +137,32 @@ class _AccountPageState extends State<AccountPage> {
               ]
           ));
   }
-  Widget _buildPaidTransactionList(){
+
+}
+
+class PaidTransactionList extends StatefulWidget {
+  final Account account;
+  const PaidTransactionList({Key? key, required this.account}) : super(key: key);
+
+  @override
+  _PaidTransactionListState createState() => _PaidTransactionListState();
+}
+
+class _PaidTransactionListState extends State<PaidTransactionList> {
+  FirebaseAdapter _database = FirebaseAdapter();
+
+  //Les transactions qui ont été payés
+  Future<List<TransactionListViewModel>>? _paidTransactionList;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _paidTransactionList = PresentationAdapter.fetchTransactionList(widget.account);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
         future: _paidTransactionList,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -193,26 +212,51 @@ class _AccountPageState extends State<AccountPage> {
           }
         });
   }
-  Widget _buildPendingTransactionList(){
+}
+
+class PendingTransactionList extends StatefulWidget {
+  final Account account;
+  const PendingTransactionList({Key? key, required this.account}) : super(key: key);
+
+  @override
+  _PendingTransactionListState createState() => _PendingTransactionListState();
+}
+
+class _PendingTransactionListState extends State<PendingTransactionList> {
+  FirebaseAdapter _database = FirebaseAdapter();
+
+  //Les transactions qui sont à valider par l'utilisateur
+  Future<List<FundTransaction>>? _pendingTransactionList;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pendingTransactionList = _database.fetchPendingTransactionList(widget.account);
+  }
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
         future: _pendingTransactionList,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if(snapshot.hasData && snapshot.data!.length > 0) {
             List<FundTransaction> transactions = snapshot.data!;
-            return ListView(
-              children: [
-                Text('Opérations à valider'),
-                TransactionTile(transaction: TransactionTileViewModel(
-                    title:transactions[0].title,
-                    amount: transactions[0].amount,
-                    accountFrom: transactions[0].accountFrom,
-                    accountTo: transactions[0].accountTo,
-                    newBalance: (_account!.balance -transactions[0].amount),
-                    description: transactions[0].description
-                ),
-                )
-              ],
-            );
+              return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            physics: ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: transactions.length,
+                            itemBuilder: (builder, index) => TransactionTile(transaction: TransactionTileViewModel(
+                              transactionId: transactions[index].documentId,
+                              accountTo: transactions[index].accountTo,
+                              accountFrom: transactions[index].accountFrom,
+                              amount: - transactions[index].amount,
+                              title: transactions[index].title,
+                              description: transactions[index].description,
+                              newBalance: 0,
+                              requiresValidation: true
+                            ))
+                        );
           }else{
             return Container();
           }
@@ -220,3 +264,5 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 }
+
+

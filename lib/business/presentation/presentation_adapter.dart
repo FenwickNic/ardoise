@@ -39,7 +39,9 @@ class PresentationAdapter{
             await database.fetchTransaction(transactionLog).then(
                     (transaction) {
                       TransactionTileViewModel tile = TransactionTileViewModel
-                        (title: transaction.title,
+                        (
+                          transactionId: transaction.documentId,
+                          title: transaction.title,
                           accountFrom: allAccounts.firstWhere((element) {
                              return transaction.accountFrom == element.documentId;
                           }).accountName,

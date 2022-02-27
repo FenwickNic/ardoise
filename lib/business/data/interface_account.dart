@@ -33,15 +33,15 @@ abstract class IAccountPort{
 
   //======================== TRANSFERER ============
   /***
-   * Transférer de l'argent d'un compte à l'autre.
+   * Cette méthode se charge de créer la transaction quelque soit son type.
    */
-  Future<void> transferFunds(FundTransaction transaction);
+  Future<void> processTransaction(FundTransaction transaction);
 
   /***
    * Valider un transfert d'argent. Ceci peut être nécessaire lorsqu'un utilisateur
    * réclame de l'argent à un autre.
    */
-  Future<void> validateTransfer(FundTransaction transaction);
+  Future<void> validateTransfer(String transactionId);
 
   /***
    * Il est possible d'annuler une transaction soit lorsque:
@@ -49,12 +49,7 @@ abstract class IAccountPort{
    *  - l'utilisateur annule sa propre demande de virement.
    *  - l'utilisateur a viré ou reçu de l'argent par erreur.
    */
-  Future<void> cancelTransfer(FundTransaction transaction);
-
-  /***
-   * Un utilisateur réclame de l'argent à un autre.
-   */
-  Future<void> claimFund(FundTransaction transaction);
+  Future<void> cancelTransfer(String transactionId);
 
   //============================== RECUPERER ==================
   /***

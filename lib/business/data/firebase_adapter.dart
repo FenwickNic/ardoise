@@ -5,6 +5,7 @@ import 'package:ardoise/model/firebase/transaction.dart';
 
 import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/model/firebase/transaction_log.dart';
+import 'package:ardoise/ui/transaction/transaction_page_arguments.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -17,40 +18,58 @@ class FirebaseAdapter extends IAccountPort{
    * TRANSACTIONS
    */
   @override
-  Future<void> validateTransfer(FundTransaction transaction) {
-    // TODO: implement validateTransfer
-    throw UnimplementedError();
-    //Mettre à jour la transaction en base de donnée,
-
-    //Mettre à jour le crédit des 2 comptes,
-
-    //Ajouter une ligne dans le transaction log.
+  Future<void> validateTransfer(String transactionId) async{
+    FundTransaction transaction = await _database.collection('transaction').doc(transactionId).get().then(
+      (value) => FundTransaction.fromMap(value)
+    );
+    _transferFunds(transaction);
   }
 
   @override
-  Future<void> transferFunds(FundTransaction transaction) async{
-    //Créer la transaction en base de donnée,
-    DocumentReference transRef = await _database.collection('transaction').add(transaction.toMap());
+  Future<void> processTransaction(FundTransaction transaction){
+    switch(transaction.type){
+      case ETransactionType.Virement:
+        return _transferFunds(transaction);
+      case ETransactionType.Creance:
+        return _claimFund(transaction);
+    }
+  }
+  @override
+  Future<void> _transferFunds(FundTransaction transaction) async{
+    //D'abord s'assurer que la transaction est bien "payée".
+    transaction.approvalStatus = ETransactionApprovalStatus.Paid;
 
-    //Débiter le compte bancaire du créancier
-    DocumentReference account_from =
+    String transactionId = "";
+    if(transaction.documentId == ""){
+      DocumentReference transRef =
+      await _database.collection('transaction').add(transaction.toMap());
+      transactionId = transRef.id;
+    }else{
+      await _database.collection('transaction').doc(transaction.documentId).set(transaction.toMap());
+      transactionId = transaction.documentId;
+    }
+
+    // Débiter le compte bancaire du créancier
+    // Afin de s'assurer que le nouveau crédit sur le compte soit correct, nous allons
+    // procéder en une seule transaction.
+    DocumentReference docAccountFrom =
       _database.collection('account')
         .doc(transaction.accountFrom);
-    //Mettre à jour le crédit sur le compte débiteur et créer le transaction Log attaché:
     FirebaseFirestore.instance.runTransaction((fireTransaction) async {
-      DocumentSnapshot snapshot_from = await fireTransaction.get(account_from);
-
-      if (!snapshot_from.exists) {
+      //Mettre à jour le crédit sur le compte bancaire du créancier
+      DocumentSnapshot snapshotFrom = await fireTransaction.get(docAccountFrom);
+      if (!snapshotFrom.exists) {
         throw Exception("This account does not exist");
       }
-      double newBalance_from = snapshot_from.data()['balance'] - transaction.amount;
-      fireTransaction.update(account_from, {'balance': newBalance_from});
+      double newBalanceFrom = (snapshotFrom.data() as Map<String, dynamic>)['balance'] - transaction.amount;
+      fireTransaction.update(docAccountFrom, {'balance': newBalanceFrom});
 
-      return newBalance_from;
+      return newBalanceFrom;
     }).then(
         (newBalance){
+          //Créer le transaction Log en y intégrant le nouveau crédit sur le compte.
           TransactionLog log_from =TransactionLog(
-              transactionId: transRef.id,
+              transactionId: transactionId,
               accountId: transaction.accountFrom,
               amount: -transaction.amount,
               newBalance: newBalance);
@@ -59,24 +78,27 @@ class FirebaseAdapter extends IAccountPort{
     );
 
     //Mettre à jour le crédit sur le compte créditeur et créer le transaction Log attaché:
-    DocumentReference account_to =
+    // Afin de s'assurer que le nouveau crédit sur le compte soit correct, nous allons
+    // procéder en une seule transaction.
+    DocumentReference docAccountTo =
     _database.collection('account')
         .doc(transaction.accountTo);
-    //Mettre à jour le crédit sur le compte débiteur et créer le transaction Log attaché:
     FirebaseFirestore.instance.runTransaction((fireTransaction) async {
-      DocumentSnapshot snapshot_to = await fireTransaction.get(account_to);
+      //Mettre à jour le crédit sur le compte bancaire du créditeur.
+      DocumentSnapshot snapshotTo = await fireTransaction.get(docAccountTo);
 
-      if (!snapshot_to.exists) {
+      if (!snapshotTo.exists) {
         throw Exception("This account does not exist");
       }
-      double newBalance_to = snapshot_to.data()['balance'] + transaction.amount;
-      fireTransaction.update(account_to, {'balance': newBalance_to});
+      double newBalanceTo = (snapshotTo.data() as Map<String, dynamic>)['balance'] + transaction.amount;
+      fireTransaction.update(docAccountTo, {'balance': newBalanceTo});
 
-      return newBalance_to;
+      return newBalanceTo;
     }).then(
             (newBalance){
+              //Créer le transaction log.
           TransactionLog log_from =TransactionLog(
-              transactionId: transRef.id,
+              transactionId: transactionId,
               accountId: transaction.accountTo,
               amount: transaction.amount,
               newBalance: newBalance);
@@ -86,23 +108,16 @@ class FirebaseAdapter extends IAccountPort{
   }
 
   @override
-  Future<void> cancelTransfer(FundTransaction transaction) {
-    // TODO: implement cancelTransfer
-    throw UnimplementedError();
-    //Mettre à jour la transaction en base de donnée
-
-    //Ajouter un champ au transaction log.
+  Future<void> _claimFund(FundTransaction transaction){
+    return _database.collection('transaction').add(transaction.toMap());
   }
 
   @override
-  Future<void> claimFund(FundTransaction transaction) {
-    // TODO: implement claimFund
-    throw UnimplementedError();
-
-    //Créer la transaction en base de donnée.
-
-    //Ajouter un éléement au transaction log.
+  Future<void> cancelTransfer(String transactionId) {
+    return _database.collection('transaction').doc(transactionId)
+        .update({"approval_status" : ETransactionApprovalStatus.Cancelled.index});
   }
+
 
   @override
   Future<List<TransactionLog>> fetchPaidTransactionList(Account account) {
@@ -121,12 +136,14 @@ class FirebaseAdapter extends IAccountPort{
   Future<List<FundTransaction>> fetchPendingTransactionList(Account account) {
     //Récupérer toutes les transactions rattachées au compte.
     return _database.collection("transaction")
-        .orderBy('date', descending: true)
+        .orderBy('submission_date', descending: false)
         .where('account_from', isEqualTo: account.documentId)
         .where('approval_status', isEqualTo: ETransactionApprovalStatus.Pending.index)
         .get().then(
             (value) {
-          return value.docs.map((map) => FundTransaction.fromMap(map)).toList();
+          return value.docs.map(
+                  (map) => FundTransaction.fromMap(map)
+          ).toList();
         });
   }
 
@@ -134,7 +151,7 @@ class FirebaseAdapter extends IAccountPort{
   Future<List<FundTransaction>> fetchSubmittedTransactionList(Account account) {
     //Récupérer toutes les transactions rattachées au compte.
     return _database.collection("transaction")
-        .orderBy('date', descending: true)
+        .orderBy('submission_date', descending: false)
         .where('account_to', isEqualTo: account.documentId)
         .where('approval_status', isEqualTo: ETransactionApprovalStatus.Pending.index)
         .get().then(

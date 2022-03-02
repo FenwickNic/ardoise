@@ -47,7 +47,7 @@ dependencies:
   flutter_masked_text2: ^0.9.1
 
   shimmer: ^2.0.0
-
+  sentry_flutter: ^6.3.0
 
 dev_dependencies:
   flutter_test:

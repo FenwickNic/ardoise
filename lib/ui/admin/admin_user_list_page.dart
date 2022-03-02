@@ -1,7 +1,9 @@
 import 'package:ardoise/business/data/firebase_adapter.dart';
+import 'package:ardoise/model/common/app_error.dart';
 import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/ui/admin/admin_user_details_arguments.dart';
 import 'package:ardoise/ui/widget/app_drawer.dart';
+import 'package:ardoise/ui/widget/settings_header.dart';
 import 'package:ardoise/ui/widget/user_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,11 +25,19 @@ class _AdminUserListState extends State<AdminUserList> {
   @override
   void initState(){
 
+    try{
     _userList = _database.fetchUserList();
     _database.fetchUserById(FirebaseAuth.instance.currentUser!.uid).then(
             (user) =>
             setState(() => _currentUser = user   )
     );
+    }catch(e, s){
+      AppError error = AppError(
+          message: "Erreur",
+          description: e.toString()
+      );
+      Navigator.pushNamed(context, '/error', arguments: e);
+    }
 
     super.initState();
   }
@@ -51,10 +61,7 @@ class _AdminUserListState extends State<AdminUserList> {
     builder: (context) =>
         ListView(
           children: [
-            _buildHeader(context),
-            Text("Utilisateurs",
-                style: Theme.of(context).textTheme.headline5
-            ),
+            SettingsHeader(title: 'Utilisateurs',),
             FutureBuilder(
                 future: _userList,
                 builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -80,10 +87,8 @@ class _AdminUserListState extends State<AdminUserList> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Bienvenue',
-                  style: TextStyle(
-                    fontSize: 30,
-                  )),
+              Text('Utilisateurs',
+                  style: Theme.of(context).textTheme.headline3),
               IconButton(
                   icon: Icon(Icons.settings),
                   onPressed: () { Scaffold.of(context).openDrawer(); }

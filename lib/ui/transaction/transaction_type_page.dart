@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TransactionTypePage extends StatelessWidget {
-  final String accountId;
-  const TransactionTypePage({Key? key, required this.accountId}) : super(key: key);
+  final AccountPageArguments arguments;
+  const TransactionTypePage({Key? key, required this.arguments}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,9 @@ class TransactionTypePage extends StatelessWidget {
                   '/transaction/account',
                   arguments: TransactionAccountPageArguments(
                       transactionType: ETransactionType.Virement,
-                      accountId: accountId)),
+                      account: arguments.account,
+                      user: arguments.user
+                  )),
 
             ),
             ListTile(
@@ -32,7 +34,9 @@ class TransactionTypePage extends StatelessWidget {
                   '/transaction/account',
                   arguments: TransactionAccountPageArguments(
                       transactionType: ETransactionType.Creance,
-                      accountId: accountId)
+                      account: arguments.account,
+                      user: arguments.user
+                  )
               ),
             )
           ],

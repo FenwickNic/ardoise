@@ -1,7 +1,11 @@
 import 'package:ardoise/model/firebase/account.dart';
+import 'package:ardoise/model/firebase/fund_user.dart';
 
 class AccountPageArguments{
-  final String accountId;
+  final Account account;
+  final FundUser user;
 
-  AccountPageArguments(this.accountId);
+  AccountPageArguments({
+    required this.user,
+    required this.account});
 }

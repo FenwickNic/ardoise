@@ -1,5 +1,6 @@
 import 'package:ardoise/business/data/firebase_adapter.dart';
 import 'package:ardoise/model/firebase/account.dart';
+import 'package:ardoise/model/firebase/enum_transaction_status.dart';
 import 'package:ardoise/model/viewmodel/transactionlist_viewmodel.dart';
 import 'package:flutter/material.dart';
 
@@ -60,6 +61,31 @@ class PresentationAdapter{
                 transactions: tileList);
             transactions.add(viewModel);
           }
+          return transactions;
+        }
+    );
+  }
+
+  static Future<List<TransactionTileViewModel>> fetchPendingTransactionList(Account account){
+    List<TransactionTileViewModel> transactions = [];
+    FirebaseAdapter database = FirebaseAdapter();
+
+    return database.fetchPendingTransactionList(account).then(
+        (transactionList) {
+          transactionList.forEach((transaction) {
+            TransactionTileViewModel transactionViewModel = TransactionTileViewModel(
+                title: transaction.title,
+                accountFrom: transaction.accountFrom,
+                accountTo: transaction.accountTo,
+                amount: -transaction.amount,
+                description: transaction.description,
+                transactionId: transaction.documentId,
+                newBalance: account.balance + transaction.amount,
+                requiresValidation: (transaction.approvalStatus == ETransactionApprovalStatus.Pending),
+            );
+
+            transactions.add(transactionViewModel);
+          });
           return transactions;
         }
     );

@@ -1,8 +1,9 @@
+import 'package:ardoise/model/common/app_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ErrorPage extends StatelessWidget {
-  final String error;
+  final AppError error;
   const ErrorPage({Key? key, required this.error}) : super(key: key);
 
   @override
@@ -10,8 +11,8 @@ class ErrorPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Text("Error"),
-          Text(error)
+          Text(error.message),
+          Text(error.description)
         ],
       )
     );

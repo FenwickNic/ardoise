@@ -19,6 +19,12 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
   TransactionPageArguments? _transaction;
 
   @override
+  void dispose(){
+    _titleTextController.dispose();
+    _descriptionTextController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -66,6 +72,7 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               TransactionPageArguments transaction = TransactionPageArguments(
+                                  user: widget.transaction.user,
                                   currentAccount:  widget.transaction.currentAccount,
                                   transactionType: widget.transaction.transactionType,
                                   accountFrom: widget.transaction.accountFrom,

@@ -1,5 +1,8 @@
+import 'package:ardoise/business/authentication/fire_auth.dart';
 import 'package:ardoise/business/data/firebase_adapter.dart';
+import 'package:ardoise/model/common/app_error.dart';
 import 'package:ardoise/model/firebase/fund_user.dart';
+import 'package:ardoise/ui/widget/error_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -23,20 +26,18 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
   final TextEditingController _lastnameTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
 
-  FundUser? _user;
   String title = "";
 
 
   @override
   void initState() {
-    _user = widget.arguments.user;
-    if(_user != null){
-      _firstnameTextController.text = _user!.firstname;
-      _lastnameTextController.text = _user!.lastname;
-      _emailTextController.text = _user!.email;
-      title = "Nouvel utilisateur";
+    if(widget.arguments.user != null){
+      _firstnameTextController.text = widget.arguments.user!.firstname;
+      _lastnameTextController.text = widget.arguments.user!.lastname;
+      _emailTextController.text = widget.arguments.user!.email;
+      title = "Éditer un utilisateur";
     }else{
-      title = "Editer un utilisateur";
+      title = "Créer un utilisateur";
     }
     super.initState();
   }
@@ -58,6 +59,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       TextFormField(
+                          autocorrect: false,
                           controller: _firstnameTextController,
                           decoration: const InputDecoration (
                               hintText: '',
@@ -71,6 +73,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                           }),
                       Divider(),
                       TextFormField(
+                          autocorrect: false,
                           controller: _lastnameTextController,
                           decoration: const InputDecoration (
                               hintText: '',
@@ -84,7 +87,9 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                           }),
                       Divider(),
                       TextFormField(
+                          autocorrect: false,
                           controller: _emailTextController,
+                          enabled: widget.arguments.user == null,
                           decoration: const InputDecoration (
                               hintText: '',
                               labelText: 'email'
@@ -95,7 +100,37 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                             }
                             return null;
                           }),
-Divider(),
+                      if(widget.arguments.user != null)
+                      Divider(),
+                      if(widget.arguments.user != null)
+                      InkWell(
+                        child: Text(
+                          "Envoyer une demande de réinitialisation du mot de passe",
+                          style: TextStyle(color: Colors.blue),
+                          textAlign: TextAlign.center,),
+                        onTap: () {
+                          try{
+                            FireAuth.sendPasswordResetEmail(widget.arguments.user!.email).then(
+                                  (_) => ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Le message est parti!"))
+                                  )
+                            );
+                          }on AppError catch(e){
+                            if(e.severity == ESeverityLevel.Error){
+                              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(error: e));
+                            }else{
+                              Navigator.pushNamed(context, '/error', arguments: e);
+                            }
+                          }catch(e, s){
+                            AppError error = AppError(
+                              message: "Erreur",
+                              description: e.toString()
+                            );
+                            Navigator.pushNamed(context, '/error', arguments: e);
+                          }
+                        },
+                      ),
+                      Divider(),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -113,20 +148,63 @@ Divider(),
                                 lastname: _lastnameTextController.text,
                                 email: _emailTextController.text,
                               );
-                              if(_user == null){
+                              if(widget.arguments.user == null){
                                 newUser.administrator = false;
-                                accountAdapter.createUser(newUser).then(
-                                    (value) => Navigator.pushNamed(context, '/admin/users')
-                                );
+                                try {
+                                  accountAdapter.createUser(newUser).then(
+                                          (value) {
+                                        ScaffoldMessenger
+                                            .of(context)
+                                            .showSnackBar(
+                                            SnackBar(content: Text(
+                                                "Un message a été envoyé à ${newUser
+                                                    .firstname}"))
+                                        )
+                                            .closed
+                                            .then(
+                                                (reason) =>
+                                                Navigator.pushNamed(
+                                                    context, '/admin/users')
+                                        );
+                                      }
+                                  );
+                                }on AppError catch(e){
+                                  if(e.severity == ESeverityLevel.Error){
+                                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(error: e));
+                                  }else{
+                                    Navigator.pushNamed(context, '/error', arguments: e);
+                                  }
+                                }catch(e, s){
+                                  AppError error = AppError(
+                                      message: "Erreur",
+                                      description: e.toString()
+                                  );
+                                  Navigator.pushNamed(context, '/error', arguments: e);
+                                }
                               }else{
-                                newUser.documentId = _user!.documentId;
+                                newUser.documentId = widget.arguments.user!.documentId;
+                                try{
                                 accountAdapter.updateUser(newUser).then(
-                                      (value) => Navigator.pushNamed(context, '/admin/users')
+                                        (value) => Navigator.pushNamed(context, '/admin/users')
                                 );
+                                }on AppError catch(e){
+                                  if(e.severity == ESeverityLevel.Error){
+                                    ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(error: e));
+                                  }else{
+                                    Navigator.pushNamed(context, '/error', arguments: e);
+                                  }
+                                }catch(e, s){
+                                  AppError error = AppError(
+                                      message: "Erreur",
+                                      description: e.toString()
+                                  );
+                                  Navigator.pushNamed(context, '/error', arguments: e);
+                                }
                               }
                             }
                           }
                       ),
+
                     ]
                 )
             )

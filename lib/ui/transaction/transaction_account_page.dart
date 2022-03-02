@@ -15,20 +15,13 @@ class TransactionAccountPage extends StatefulWidget {
 class _TransactionAccountPageState extends State<TransactionAccountPage> {
   FirebaseAdapter _database = FirebaseAdapter();
 
-  Account? _account;
   Future<List<Account>>? _accountList;
   String _searchField = "";
 
   @override
   void initState() {
-    _database.fetchAccountById(widget.transaction.accountId).then(
-            (value) {
-              setState((){
-                _account = value;
-              });
-              _accountList = _database.searchAccounts(_searchField);
-            }
-    );
+    _accountList = _database.searchAccounts(_searchField);
+
     super.initState();
   }
 
@@ -74,16 +67,18 @@ class _TransactionAccountPageState extends State<TransactionAccountPage> {
                                             arguments:
                                             widget.transaction.transactionType == ETransactionType.Virement ?
                                             TransactionAmountPageArguments(
-                                                currentAccount: _account!,
+                                                user: widget.transaction.user,
+                                                currentAccount: widget.transaction.account,
                                                 transactionType: widget.transaction.transactionType,
-                                                accountFrom: _account!,
+                                                accountFrom: widget.transaction.account,
                                                 accountTo: data[index]
                                             ) :
                                             TransactionAmountPageArguments(
-                                                currentAccount: _account!,
+                                                user: widget.transaction.user,
+                                                currentAccount: widget.transaction.account,
                                                 transactionType: widget.transaction.transactionType,
                                                 accountFrom: data[index],
-                                                accountTo: _account!,
+                                                accountTo: widget.transaction.account,
                                             )
 
                                         );

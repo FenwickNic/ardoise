@@ -1,7 +1,6 @@
 import 'package:ardoise/ui/_common/error_page.dart';
 import 'package:ardoise/ui/account/account_page.dart';
 import 'package:ardoise/ui/account/account_page_arguments.dart';
-import 'package:ardoise/ui/account/account_pending_page.dart';
 import 'package:ardoise/ui/account/home_page.dart';
 import 'package:ardoise/ui/admin/admin_user_details_arguments.dart';
 import 'package:ardoise/ui/authentication/forgot_email_page.dart';
@@ -69,22 +68,22 @@ class MonArdoiseApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(
             elevation: 0,
             systemOverlayStyle: SystemUiOverlayStyle(
-              //statusBarColor: Colors.white,
-              statusBarIconBrightness: Brightness.dark,
+              statusBarColor: Colors.white,
+              statusBarIconBrightness: Brightness.light,
               statusBarBrightness: Brightness.light,
             ),
           ),
-          primaryColor: Color.fromRGBO(252, 163, 17, 1),
+          primaryColor: Color.fromRGBO(239, 71, 111, 1),
           colorScheme: const ColorScheme(
             brightness: Brightness.light,
 
             //Behind scrollable content.
-            background: Color.fromRGBO(57, 160, 237, 1),
-            onBackground: Colors.black,
+            background: Color.fromRGBO(239, 71, 111, 1),
+            onBackground: Colors.white,
 
             //Buttons
-            primary: Color.fromRGBO(57, 160, 237, 1),
-            primaryVariant: Colors.blue,
+            primary: Color.fromRGBO(239, 71, 111, 1),
+            primaryVariant: Color.fromRGBO(20, 33, 61, 1),
             onPrimary: Colors.white,
 
             //Filter clips
@@ -100,17 +99,32 @@ class MonArdoiseApp extends StatelessWidget {
           ),
           inputDecorationTheme: const InputDecorationTheme(
             isDense: true,
-
-
             errorBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.red)
             ),
             errorStyle: TextStyle(color: Colors.red),
           ),
           cardTheme: CardTheme(
-            color: Color.fromRGBO(57, 160, 237, 1),
+            margin: EdgeInsets.all(20),
+            color: Color.fromRGBO(216, 216, 216, 1),
+            shape: Border(left:
+              BorderSide(
+                color: Color.fromRGBO(239, 71, 111, 1),
+                width: 10
+              )
+            )
           ),
-          textTheme: TextTheme(
+          textTheme: const TextTheme(
+            headline1: TextStyle(fontSize: 30,
+                color: Colors.white,
+                fontFamily: "Helvetica",
+                fontWeight: FontWeight.bold
+            ),
+              headline2: TextStyle(fontSize: 20,
+                  color: Color.fromRGBO(20, 33, 61, 1),
+                  fontFamily: "Helvetica",
+                  fontWeight: FontWeight.normal
+              ),
             headline3: TextStyle(fontSize: 30, color: Colors.black, )
           ),
         ),
@@ -124,11 +138,8 @@ class MonArdoiseApp extends StatelessWidget {
             case '/account':
               AccountPageArguments arguments = (settings.arguments as AccountPageArguments);
               return MaterialPageRoute(builder: (context) => AccountPage(arguments: arguments));
-            case '/account/pending':
-              AccountPageArguments arguments = (settings.arguments as AccountPageArguments);
-              return MaterialPageRoute(builder: (context) => AccountPendingPage(arguments: arguments));
-            case '/transaction/type':
-              AccountPageArguments arguments = (settings.arguments as AccountPageArguments);
+          case '/transaction/type':
+            TransactionTypePageArguments arguments = (settings.arguments as TransactionTypePageArguments);
               return MaterialPageRoute(builder: (context) => TransactionTypePage(arguments: arguments));
             case '/transaction/account':
               TransactionAccountPageArguments transaction = (settings.arguments as TransactionAccountPageArguments);

@@ -4,7 +4,6 @@ import 'package:ardoise/business/validator/email_validator.dart';
 import 'package:ardoise/model/common/app_error.dart';
 import 'package:ardoise/ui/widget/error_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 /// Entrypoint example for various sign-in flows with Firebase.
@@ -53,22 +52,22 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-            padding: EdgeInsets.only(bottom: 80),
+            padding: const EdgeInsets.only(bottom: 80),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded( child: Container(
-                      padding: EdgeInsets.only(left: 40, right: 40, bottom: 60),
+                      padding: const EdgeInsets.only(left: 40, right: 40, bottom: 60),
                       color: Theme.of(context).colorScheme.primary,
                       height: 200,
                       alignment: AlignmentDirectional.bottomCenter,
-                      child: Image.asset('assets/img/monardoise_logo.png')
+                      child: Image.asset('assets/img/ardoise_logo_darkblue.png')
                   )),
                   Form(
                       key: _formKey,
                       child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -83,7 +82,7 @@ class _SignInPageState extends State<SignInPage> {
                                       prefixIcon: Icon(Icons.mail),
                                     ),
                                     validator: (value) => EmailValidator.vaidate(value)),
-                                Divider(),
+                                const Divider(),
                                 TextFormField(
                                     obscureText: true,
                                     controller: _passwordTextController,
@@ -98,7 +97,7 @@ class _SignInPageState extends State<SignInPage> {
                                       }
                                       return null;
                                     }),
-                                Divider(),
+                                const Divider(),
                                 ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -125,11 +124,11 @@ class _SignInPageState extends State<SignInPage> {
                                           }else{
                                             Navigator.pushNamed(context, '/error', arguments: e);
                                           }
-                                        }catch(e,s){
+                                        }catch(e){
                                           AppError error = AppError(
                                               message: "Erreur",
                                               description: e.toString());
-                                          Navigator.pushNamed(context, '/error', arguments: e);
+                                          Navigator.pushNamed(context, '/error', arguments: error);
                                         }
                                         if (user != null) {
                                           try {
@@ -153,20 +152,20 @@ class _SignInPageState extends State<SignInPage> {
                                             }else{
                                               Navigator.pushNamed(context, '/error', arguments: e);
                                             }
-                                          }catch(e,s){
+                                          }catch(e,stack){
                                             AppError error = AppError(
                                                 message: "Erreur",
                                                 description: e.toString());
-                                            Navigator.pushNamed(context, '/error', arguments: e);
+                                            Navigator.pushNamed(context, '/error', arguments: error);
                                           }
                                           //L'utilisateur n'existe pas
                                         }
                                       }
                                     }
                                 ),
-                                Divider(),
+                                const Divider(),
                                 InkWell(
-                                  child: Text(
+                                  child: const Text(
                                     "J'ai oublié mon mot de passe",
                                     style: TextStyle(color: Colors.blue),
                                     textAlign: TextAlign.center,),

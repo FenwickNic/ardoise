@@ -1,5 +1,4 @@
 import 'package:ardoise/model/common/app_error.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ErrorPage extends StatelessWidget {

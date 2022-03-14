@@ -28,7 +28,7 @@ class FirebaseAdapter extends IAccountPort{
           .then(
               (value) => FundTransaction.fromMap(value)
       );
-      _transferFunds(transaction);
+      await _transferFunds(transaction);
     }catch(e, stackTrace){
       await Sentry.captureException(
         e,
@@ -85,12 +85,12 @@ class FirebaseAdapter extends IAccountPort{
     DocumentReference docAccountTo =
     _database.collection('account').doc(transaction.accountTo);
 
-    FirebaseFirestore.instance.runTransaction((fireTransaction) async {
+    await FirebaseFirestore.instance.runTransaction((fireTransaction) async {
       //Récupérer les comptes bancaires
       DocumentSnapshot snapshotFrom = await fireTransaction.get(docAccountFrom);
       DocumentSnapshot snapshotTo = await fireTransaction.get(docAccountTo);
 
-      if (!snapshotFrom.exists || snapshotTo.exists) {
+      if (!snapshotFrom.exists || !snapshotTo.exists) {
         throw Exception("This account does not exist");
       }
 
@@ -124,14 +124,26 @@ class FirebaseAdapter extends IAccountPort{
         e,
         stackTrace: stackTrace,
       );
+
+      //Set the transaction to Pending
       transaction.approvalStatus = ETransactionApprovalStatus.Pending;
       await _database.collection('transaction')
           .doc(transaction.documentId)
           .set(transaction.toMap());
 
+      //Remove all transactions
+      _database.collection('transaction_log')
+          .where('transaction_id', isEqualTo: transaction.documentId).get()
+      .then((snapshots) {
+        for(var item in snapshots.docs){
+          item.reference.delete();
+        }
+      });
+
+      //Log error
       AppError error = AppError(
           severity: ESeverityLevel.Error,
-          message: "Opération interrompue",
+          message: "${transaction.documentId}: Opération interrompue",
           description: e.toString()
       );
       throw error;
@@ -172,7 +184,6 @@ class FirebaseAdapter extends IAccountPort{
       );
     }
   }
-
 
   @override
   Future<List<TransactionLog>> fetchPaidTransactionList(Account account) async{
@@ -356,13 +367,16 @@ class FirebaseAdapter extends IAccountPort{
   }
 
   @override
-  Future<List<Account>> searchAccounts(String? name) async {
+  Future<List<Account>> searchAccounts({String name = "", String accountToRemove = ""}) async {
     try{
       return fetchAccountList().then((accounts) {
-        if(name== null || name.isEmpty) return accounts;
+        if(name.isEmpty && accountToRemove == "") return accounts;
         List<Account> filteredList = [];
         for (Account account in accounts) {
-          if (account.accountName.toLowerCase().contains(name.toLowerCase())) {
+          if (
+            accountToRemove != account.documentId &&
+            account.accountName.toLowerCase().contains(name.toLowerCase())
+          ) {
             filteredList.add(account);
           }
         }
@@ -409,7 +423,7 @@ class FirebaseAdapter extends IAccountPort{
       //Créer un utilisateur dans le moteur d'authentification.
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: user.email,
-          password: ""
+          password: "test123"
       ).then((value) => user.documentId = value.user!.uid);
     } on FirebaseAuthException catch (e, stackTrace) {
       await Sentry.captureException(

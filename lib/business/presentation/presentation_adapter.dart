@@ -1,11 +1,12 @@
 import 'package:ardoise/business/data/firebase_adapter.dart';
 import 'package:ardoise/model/firebase/account.dart';
 import 'package:ardoise/model/firebase/enum_transaction_status.dart';
+import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/model/viewmodel/transactionlist_viewmodel.dart';
 import 'package:flutter/material.dart';
 
 class PresentationAdapter{
-  static Future<List<TransactionListViewModel>> fetchTransactionList(Account account){
+  static Future<List<TransactionListViewModel>> fetchTransactionList(FundUser user, Account account){
     List<TransactionListViewModel> transactions = [];
     FirebaseAdapter database = FirebaseAdapter();
 
@@ -41,6 +42,8 @@ class PresentationAdapter{
                     (transaction) {
                       TransactionTileViewModel tile = TransactionTileViewModel
                         (
+                        user: user,
+                          currentAccount: account,
                           transactionId: transaction.documentId,
                           title: transaction.title,
                           accountFrom: allAccounts.firstWhere((element) {
@@ -66,17 +69,28 @@ class PresentationAdapter{
     );
   }
 
-  static Future<List<TransactionTileViewModel>> fetchPendingTransactionList(Account account){
+  static Future<List<TransactionTileViewModel>> fetchPendingTransactionList(FundUser user, Account account) async{
     List<TransactionTileViewModel> transactions = [];
     FirebaseAdapter database = FirebaseAdapter();
+
+    List<Account> allAccounts = [];
+    await database.fetchAccountList().then(
+            (accounts) => allAccounts = accounts
+    );
 
     return database.fetchPendingTransactionList(account).then(
         (transactionList) {
           transactionList.forEach((transaction) {
             TransactionTileViewModel transactionViewModel = TransactionTileViewModel(
+              user: user,
+                currentAccount: account,
                 title: transaction.title,
-                accountFrom: transaction.accountFrom,
-                accountTo: transaction.accountTo,
+                accountFrom: allAccounts.firstWhere((element) {
+                  return transaction.accountFrom == element.documentId;
+                }, orElse: () => Account.unknown()).accountName,
+                accountTo: allAccounts.firstWhere((element) {
+                  return transaction.accountTo == element.documentId;
+                }, orElse: () => Account.unknown()).accountName,
                 amount: -transaction.amount,
                 description: transaction.description,
                 transactionId: transaction.documentId,

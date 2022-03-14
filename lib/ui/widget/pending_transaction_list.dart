@@ -1,29 +1,31 @@
 import 'package:ardoise/business/data/firebase_adapter.dart';
 import 'package:ardoise/business/presentation/presentation_adapter.dart';
 import 'package:ardoise/model/firebase/account.dart';
+import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/model/viewmodel/transactionlist_viewmodel.dart';
 import 'package:ardoise/ui/widget/transaction_tile.dart';
 import 'package:flutter/cupertino.dart';
 
 class PendingTransactionList extends StatefulWidget {
+  final FundUser user;
   final Account account;
-  const PendingTransactionList({Key? key, required this.account}) : super(key: key);
+  const PendingTransactionList({Key? key,
+    required this.user,
+    required this.account}) : super(key: key);
 
   @override
   _PendingTransactionListState createState() => _PendingTransactionListState();
 }
 
 class _PendingTransactionListState extends State<PendingTransactionList> {
-  FirebaseAdapter _database = FirebaseAdapter();
-
   //Les transactions qui sont à valider par l'utilisateur
   Future<List<TransactionTileViewModel>>? _pendingTransactionList;
+  FirebaseAdapter _database = FirebaseAdapter();
 
   @override
   void initState() {
     super.initState();
-
-    _pendingTransactionList = PresentationAdapter.fetchPendingTransactionList(widget.account);
+    _pendingTransactionList = PresentationAdapter.fetchPendingTransactionList(widget.user, widget.account);
   }
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class _PendingTransactionListState extends State<PendingTransactionList> {
             List<TransactionTileViewModel> transactions = snapshot.data!;
             return ListView.builder(
                 padding: EdgeInsets.zero,
-                physics: ClampingScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: transactions.length,
@@ -44,8 +46,11 @@ class _PendingTransactionListState extends State<PendingTransactionList> {
             return ListView(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-              children:[
-                Center(child: Text("Aucune transaction à valider"))
+              children:const [
+                SizedBox(
+                    height: 100,
+                    child: Center(
+                    child: Text("Aucune transaction à valider")))
               ]
             );
           }

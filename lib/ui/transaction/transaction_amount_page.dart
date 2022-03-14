@@ -1,8 +1,6 @@
 import 'package:ardoise/business/presentation/decimal_text_input_formatter.dart';
 import 'package:ardoise/ui/transaction/transaction_page_arguments.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class TransactionAmountPage extends StatefulWidget {
   final TransactionAmountPageArguments transaction;
@@ -15,7 +13,7 @@ class TransactionAmountPage extends StatefulWidget {
 class _TransactionAmountPageState extends State<TransactionAmountPage>{
   //Create the Controllers:
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _amountTextController = TextEditingController();
+  final TextEditingController _amountTextController = TextEditingController();
 
   bool _isValid = false;
 
@@ -27,6 +25,7 @@ class _TransactionAmountPageState extends State<TransactionAmountPage>{
   @override
   void dispose(){
     _amountTextController.dispose();
+    super.dispose();
   }
 
 
@@ -34,12 +33,12 @@ class _TransactionAmountPageState extends State<TransactionAmountPage>{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("Montant")
+            title: const Text("Montant")
         ),
         body:Form(
             key: _formKey,
             child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -47,12 +46,12 @@ class _TransactionAmountPageState extends State<TransactionAmountPage>{
                     children: <Widget>[
                       Text("Combien ?",
                         style: Theme.of(context).textTheme.headline6,),
-                      Divider(height:40),
+                      const Divider(height:40),
                       TextFormField(
                           onChanged: (value){
                             setState(()
                             {
-                              _isValid = value.length > 0;
+                              _isValid = value.isNotEmpty;
                             });
                           },
                           inputFormatters: [
@@ -61,8 +60,8 @@ class _TransactionAmountPageState extends State<TransactionAmountPage>{
                           autofocus: true,
                           maxLines: null,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 40),
-                          keyboardType: TextInputType.numberWithOptions(
+                          style: const TextStyle(fontSize: 40),
+                          keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
                               signed: false),
                           controller: _amountTextController,
@@ -80,7 +79,7 @@ class _TransactionAmountPageState extends State<TransactionAmountPage>{
                             }
                             return null;
                           }),
-                      Divider(height:40),
+                      const Divider(height:40),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),

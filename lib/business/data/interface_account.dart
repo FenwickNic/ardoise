@@ -93,5 +93,5 @@ abstract class IAccountPort{
   /// passée.
   List<FundTransaction> searchSimilar(FundTransaction transaction);
 
-  Future<List<Account>> searchAccounts(String name);
+  Future<List<Account>> searchAccounts({String name = "", String accountToRemove = ""});
 }

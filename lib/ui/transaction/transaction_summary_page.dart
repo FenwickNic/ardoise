@@ -8,7 +8,6 @@ import 'package:ardoise/ui/transaction/transaction_page_arguments.dart';
 import 'package:ardoise/ui/widget/error_snackbar.dart';
 import 'package:ardoise/ui/widget/transaction_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TransactionSummaryPage extends StatelessWidget {
@@ -19,23 +18,25 @@ class TransactionSummaryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Confirmer"),
+          title: const Text("Confirmer"),
         ),
         body: Padding(
-            padding: EdgeInsets.only(top:30, left: 20, right: 20),
+            padding: const EdgeInsets.only(top:30, left: 20, right: 20),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text("Veuillez confirmer votre virement", style: Theme.of(context).textTheme.headline6),
-                  Divider(),
+                  const Divider(),
                   TransactionDetails(transaction: TransactionDetailsViewModel(
+                    currentAccount: transaction.currentAccount,
+                    user: transaction.user,
                     title: transaction.title,
                     amount: transaction.amount,
                     accountFrom: transaction.accountFrom.accountName,
                     accountTo: transaction.accountTo.accountName,
                     description: transaction.description,
                   )),
-                  Divider(height: 30),
+                  const Divider(height: 30),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -63,9 +64,9 @@ class TransactionSummaryPage extends StatelessWidget {
                                     .of(context)
                                     .showSnackBar(
                                     const SnackBar(
-                                      content: const Text(
+                                      content: Text(
                                           'Votre opération est en cours'),
-                                      duration: const Duration(seconds: 3),
+                                      duration: Duration(seconds: 3),
                                     ))
                                     .closed
                                     .then(
@@ -74,7 +75,7 @@ class TransactionSummaryPage extends StatelessWidget {
                                             arguments: AccountPageArguments(
                                                 user: transaction.user,
                                                 account: transaction
-                                                    .currentAccount))
+                                                    .currentAccount.documentId))
                                 );
                               }
                           );
@@ -89,18 +90,18 @@ class TransactionSummaryPage extends StatelessWidget {
                           AppError error = AppError(
                               message: "Erreur",
                               description: e.toString());
-                          Navigator.pushNamed(context, '/error', arguments: e);
+                          Navigator.pushNamed(context, '/error', arguments: error);
                         }
                         Navigator.pushNamed(
                             context,
                             '/account',
                             arguments: AccountPageArguments(
                                 user: transaction.user,
-                                account: transaction.currentAccount
+                                account: transaction.currentAccount.documentId
                             )
                         );
                       },
-                      child: Text("Confirmer",
+                      child: const Text("Confirmer",
                         style: TextStyle(
                             fontSize: 20
                         ),

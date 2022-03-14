@@ -1,7 +1,12 @@
+import 'package:ardoise/model/firebase/account.dart';
+import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/model/viewmodel/transactionlist_viewmodel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TransactionDetailsViewModel{
+  FundUser user;
+  Account currentAccount;
+
   String transactionId;
   String title;
   String description;
@@ -11,6 +16,8 @@ class TransactionDetailsViewModel{
   bool requiresValidation;
 
   TransactionDetailsViewModel({
+    required this.user,
+    required this.currentAccount,
     this.transactionId = "",
     required this.accountFrom,
     required this.accountTo,
@@ -22,12 +29,16 @@ class TransactionDetailsViewModel{
 
   factory TransactionDetailsViewModel.fromTransactionTile(TransactionTileViewModel tile){
     return TransactionDetailsViewModel(
-      transactionId : tile.transactionId,
-      accountFrom:tile.accountFrom,
-      accountTo: tile.accountTo,
-      amount: tile.amount,
-      title: tile.title,
-      description: tile.description,
+      currentAccount: tile.currentAccount,
+        user: tile.user,
+        transactionId : tile.transactionId,
+        accountFrom:tile.accountFrom,
+        accountTo: tile.accountTo,
+        amount: tile.amount,
+        title: tile.title,
+        description: tile.description,
+        requiresValidation: tile.requiresValidation
     );
   }
+
 }

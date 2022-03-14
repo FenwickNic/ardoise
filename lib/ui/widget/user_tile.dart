@@ -1,6 +1,5 @@
 import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/ui/admin/admin_user_details_arguments.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserTile extends StatelessWidget {

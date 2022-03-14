@@ -1,4 +1,6 @@
+import 'package:ardoise/model/firebase/account.dart';
 import 'package:ardoise/model/firebase/enum_transaction_status.dart';
+import 'package:ardoise/model/firebase/fund_user.dart';
 
 class TransactionListViewModel{
   DateTime date;
@@ -10,6 +12,8 @@ class TransactionListViewModel{
 }
 
 class TransactionTileViewModel{
+  FundUser user;
+  Account currentAccount;
   String transactionId;
   String title;
   String description;
@@ -22,6 +26,8 @@ class TransactionTileViewModel{
 
   TransactionTileViewModel(
       {
+        required this.user,
+        required this.currentAccount,
         this.transactionId = "",
         required this.title,
         this.description = '',

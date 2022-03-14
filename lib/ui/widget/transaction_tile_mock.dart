@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -11,16 +10,16 @@ class TransactionTileMock extends StatelessWidget {
         baseColor: Colors.grey[350]!,
         highlightColor: Colors.grey[300]!,
         child: Padding(
-            padding: EdgeInsets.only(bottom: 15),
+            padding: const EdgeInsets.only(bottom: 15),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children:[
                   Row(
                       children: [
-                        CircleAvatar(),
+                        const CircleAvatar(),
                         Padding(
-                            padding:EdgeInsets.only(left:30),
+                            padding:const EdgeInsets.only(left:30),
                             child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -30,7 +29,7 @@ class TransactionTileMock extends StatelessWidget {
                                     height:20,
                                     width:100,
                                     color: Colors.grey[350],
-                                  ),Divider(height: 5,),
+                                  ),const Divider(height: 5,),
                                   Container(
                                       height:20,
                                       width:150,

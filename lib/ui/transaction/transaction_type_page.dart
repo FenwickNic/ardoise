@@ -1,17 +1,15 @@
-import 'package:ardoise/ui/account/account_page_arguments.dart';
 import 'package:ardoise/ui/transaction/transaction_page_arguments.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TransactionTypePage extends StatelessWidget {
-  final AccountPageArguments arguments;
+  final TransactionTypePageArguments arguments;
   const TransactionTypePage({Key? key, required this.arguments}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("Opération")
+            title: const Text("Opération")
         ),
         body: ListView(
           children: [

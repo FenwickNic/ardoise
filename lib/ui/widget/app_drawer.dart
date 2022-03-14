@@ -2,7 +2,6 @@ import 'package:ardoise/business/data/firebase_adapter.dart';
 import 'package:ardoise/model/common/app_error.dart';
 import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'error_snackbar.dart';
@@ -19,7 +18,7 @@ class AppDrawer extends StatelessWidget {
           children: [
             DrawerHeader(
 
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.blue),
               child: InkWell(
                 child: Text(user.fullname,
@@ -45,7 +44,7 @@ class AppDrawer extends StatelessWidget {
   Widget _adminTiles(BuildContext context) {
     return
       ListTile(
-        title: Text("Gérer les utilisateurs"),
+        title: const Text("Gérer les utilisateurs"),
         onTap: (){
           Navigator.pushNamed(context, '/admin/users', arguments: user);
         },
@@ -54,7 +53,7 @@ class AppDrawer extends StatelessWidget {
 
   Widget _userTiles(BuildContext context){
     return ListTile(
-      title: Text("Gérer ses comptes"),
+      title: const Text("Gérer ses comptes"),
       onTap: () {
         FirebaseAdapter _database = FirebaseAdapter();
         try {
@@ -73,7 +72,7 @@ class AppDrawer extends StatelessWidget {
           AppError error = AppError(
               message: "Erreur",
               description: e.toString());
-          Navigator.pushNamed(context, '/error', arguments: e);
+          Navigator.pushNamed(context, '/error', arguments: error);
         }
       },
     );

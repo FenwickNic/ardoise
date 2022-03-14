@@ -2,7 +2,7 @@ import 'package:ardoise/model/firebase/account.dart';
 import 'package:ardoise/model/firebase/fund_user.dart';
 
 class AccountPageArguments{
-  final Account account;
+  final String account;
   final FundUser user;
 
   AccountPageArguments({

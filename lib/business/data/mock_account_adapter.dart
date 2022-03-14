@@ -111,7 +111,7 @@ class MockAccountAdapter extends IAccountPort{
   }
 
   @override
-  Future<List<Account>> searchAccounts(String name) {
+  Future<List<Account>> searchAccounts({String name = "", String accountToRemove = ""}) {
     // TODO: implement searchAccounts
     throw UnimplementedError();
   }

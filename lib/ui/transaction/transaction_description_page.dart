@@ -1,5 +1,4 @@
 import 'package:ardoise/ui/transaction/transaction_page_arguments.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TransactionDescritpionPage extends StatefulWidget {
@@ -16,24 +15,24 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
   final TextEditingController _titleTextController = TextEditingController();
   final TextEditingController _descriptionTextController = TextEditingController();
 
-  TransactionPageArguments? _transaction;
-
   @override
   void dispose(){
     _titleTextController.dispose();
     _descriptionTextController.dispose();
+
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("Description")
+            title: const Text("Description")
         ),
         body:Form(
             key: _formKey,
             child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -50,7 +49,7 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
                             }
                             return null;
                           }),
-                      Divider(height: 80),
+                      const Divider(height: 80),
 
                       Text("Description de la transaction: ",
                         style: Theme.of(context).textTheme.headline6,),
@@ -58,7 +57,7 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
                         maxLines: 5,
                         controller: _descriptionTextController,
                       ),
-                      Divider(height: 80),
+                      const Divider(height: 80),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),

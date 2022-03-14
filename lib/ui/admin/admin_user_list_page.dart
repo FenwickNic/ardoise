@@ -6,7 +6,6 @@ import 'package:ardoise/ui/widget/app_drawer.dart';
 import 'package:ardoise/ui/widget/settings_header.dart';
 import 'package:ardoise/ui/widget/user_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AdminUserList extends StatefulWidget {
@@ -17,7 +16,7 @@ class AdminUserList extends StatefulWidget {
 }
 
 class _AdminUserListState extends State<AdminUserList> {
-  FirebaseAdapter _database = FirebaseAdapter();
+  final FirebaseAdapter _database = FirebaseAdapter();
 
   late Future<List<FundUser>> _userList;
   FundUser? _currentUser;
@@ -36,7 +35,7 @@ class _AdminUserListState extends State<AdminUserList> {
           message: "Erreur",
           description: e.toString()
       );
-      Navigator.pushNamed(context, '/error', arguments: e);
+      Navigator.pushNamed(context, '/error', arguments: error);
     }
 
     super.initState();
@@ -55,13 +54,13 @@ class _AdminUserListState extends State<AdminUserList> {
                   arguments: AdminUserDetailsArguments(user: null)
               );
             },
-            child: Icon(Icons.add)
+            child: const Icon(Icons.add)
         ),
         body:Builder(
     builder: (context) =>
         ListView(
           children: [
-            SettingsHeader(title: 'Utilisateurs',),
+            const SettingsHeader(title: 'Utilisateurs',),
             FutureBuilder(
                 future: _userList,
                 builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -69,31 +68,17 @@ class _AdminUserListState extends State<AdminUserList> {
                     List<FundUser> data = snapshot.data!;
                     return ListView.builder(
                         shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
+                        physics: const ClampingScrollPhysics(),
                         itemCount: data.length,
                         itemBuilder: (builder, index) {
                           return UserTile(user: data[index]);
                         });
                   }else{
-                    return Text("Qui utilise l'application?");
+                    return const Text("Qui utilise l'application?");
                   }
                 })
           ],
         )
     ));
-  }
-  Widget _buildHeader(BuildContext context){
-    return Container(
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Utilisateurs',
-                  style: Theme.of(context).textTheme.headline3),
-              IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () { Scaffold.of(context).openDrawer(); }
-              )
-            ])
-    );
   }
 }

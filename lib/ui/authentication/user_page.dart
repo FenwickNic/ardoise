@@ -3,7 +3,6 @@ import 'package:ardoise/business/data/firebase_adapter.dart';
 import 'package:ardoise/model/common/app_error.dart';
 import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/ui/widget/error_snackbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserPage extends StatefulWidget {
@@ -15,12 +14,12 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  FirebaseAdapter _database = FirebaseAdapter();
+  final FirebaseAdapter _database = FirebaseAdapter();
 
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _firstnameTextController = TextEditingController();
-  TextEditingController _lastnameTextController = TextEditingController();
-  TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _firstnameTextController = TextEditingController();
+  final TextEditingController _lastnameTextController = TextEditingController();
+  final TextEditingController _emailTextController = TextEditingController();
 
   @override
   void initState() {
@@ -36,7 +35,7 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Votre utilisateur"),
+          title: const Text("Votre utilisateur"),
         ),
         body: Form(
             key: _formKey,
@@ -85,7 +84,7 @@ class _UserPageState extends State<UserPage> {
                             return null;
                           }),
                       InkWell(
-                        child: Text(
+                        child: const Text(
                           "Réinitialiser le mot de passe",
                           style: TextStyle(color: Colors.blue),
                           textAlign: TextAlign.center,),
@@ -93,7 +92,7 @@ class _UserPageState extends State<UserPage> {
                           try{
                             FireAuth.sendPasswordResetEmail(widget.user.email).then(
                                   (a) =>
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Le message est parti!"))),
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Le message est parti!"))),
                             );
                           }on AppError catch(e){
                             if(e.severity == ESeverityLevel.Error){
@@ -102,11 +101,11 @@ class _UserPageState extends State<UserPage> {
                             }else{
                               Navigator.pushNamed(context, '/error', arguments: e);
                             }
-                          }catch(e,s){
+                          }catch(e,stack){
                             AppError error = AppError(
                                 message: "Erreur",
                                 description: e.toString());
-                            Navigator.pushNamed(context, '/error', arguments: e);
+                            Navigator.pushNamed(context, '/error', arguments: error);
                           }
                         },
                       ),
@@ -135,11 +134,11 @@ class _UserPageState extends State<UserPage> {
                                 }else{
                                   Navigator.pushNamed(context, '/error', arguments: e);
                                 }
-                              }catch(e,s){
+                              }catch(e,stack){
                                 AppError error = AppError(
                                     message: "Erreur",
                                     description: e.toString());
-                                Navigator.pushNamed(context, '/error', arguments: e);
+                                Navigator.pushNamed(context, '/error', arguments: error);
                               }
                             }
                           }

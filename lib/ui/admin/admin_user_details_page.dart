@@ -3,7 +3,6 @@ import 'package:ardoise/business/data/firebase_adapter.dart';
 import 'package:ardoise/model/common/app_error.dart';
 import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/ui/widget/error_snackbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'admin_user_details_arguments.dart';
@@ -71,7 +70,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                             }
                             return null;
                           }),
-                      Divider(),
+                      const Divider(),
                       TextFormField(
                           autocorrect: false,
                           controller: _lastnameTextController,
@@ -85,7 +84,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                             }
                             return null;
                           }),
-                      Divider(),
+                      const Divider(),
                       TextFormField(
                           autocorrect: false,
                           controller: _emailTextController,
@@ -101,10 +100,10 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                             return null;
                           }),
                       if(widget.arguments.user != null)
-                      Divider(),
+                      const Divider(),
                       if(widget.arguments.user != null)
                       InkWell(
-                        child: Text(
+                        child: const Text(
                           "Envoyer une demande de réinitialisation du mot de passe",
                           style: TextStyle(color: Colors.blue),
                           textAlign: TextAlign.center,),
@@ -112,7 +111,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                           try{
                             FireAuth.sendPasswordResetEmail(widget.arguments.user!.email).then(
                                   (_) => ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text("Le message est parti!"))
+                                    const SnackBar(content: Text("Le message est parti!"))
                                   )
                             );
                           }on AppError catch(e){
@@ -121,16 +120,16 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                             }else{
                               Navigator.pushNamed(context, '/error', arguments: e);
                             }
-                          }catch(e, s){
+                          }catch(e, stack){
                             AppError error = AppError(
                               message: "Erreur",
                               description: e.toString()
                             );
-                            Navigator.pushNamed(context, '/error', arguments: e);
+                            Navigator.pushNamed(context, '/error', arguments: error);
                           }
                         },
                       ),
-                      Divider(),
+                      const Divider(),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -179,7 +178,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                                       message: "Erreur",
                                       description: e.toString()
                                   );
-                                  Navigator.pushNamed(context, '/error', arguments: e);
+                                  Navigator.pushNamed(context, '/error', arguments: error);
                                 }
                               }else{
                                 newUser.documentId = widget.arguments.user!.documentId;
@@ -198,7 +197,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                                       message: "Erreur",
                                       description: e.toString()
                                   );
-                                  Navigator.pushNamed(context, '/error', arguments: e);
+                                  Navigator.pushNamed(context, '/error', arguments: error);
                                 }
                               }
                             }

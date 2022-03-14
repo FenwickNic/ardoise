@@ -7,16 +7,16 @@ class SettingsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(left:30, right:30, bottom: 10),
+        padding: const EdgeInsets.only(left:30, right:30, bottom: 10),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 30,
                   )),
               IconButton(
-                  icon: Icon(Icons.settings),
+                  icon: const Icon(Icons.settings),
                   onPressed: () { Scaffold.of(context).openDrawer(); }
               )
             ])

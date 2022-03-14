@@ -1,7 +1,6 @@
 import 'package:ardoise/business/presentation/string_adapter.dart';
 import 'package:ardoise/model/viewmodel/transactiondetails_viewmodel.dart';
 import 'package:ardoise/model/viewmodel/transactionlist_viewmodel.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TransactionTile extends StatelessWidget {
@@ -20,12 +19,12 @@ class TransactionTile extends StatelessWidget {
       "de ${transaction.accountFrom}" :
       "à ${transaction.accountTo}"),
       leading: CircleAvatar(
-        backgroundColor: transaction.isCredit? Colors.blue : Colors.pink,
+        backgroundColor: transaction.isCredit? Theme.of(context).primaryColor : Theme.of(context).colorScheme.primaryVariant,
         foregroundColor: Colors.white,
-        child: Icon(Icons.euro_symbol),),
+        child: const Icon(Icons.euro_symbol),),
       trailing: Text(
         StringAdapter.formatCurrency(context, transaction.amount),
-        style: TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18),
       ),
     );
   }

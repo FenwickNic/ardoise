@@ -1,4 +1,5 @@
 import 'package:ardoise/business/authentication/fire_auth.dart';
+import 'package:ardoise/business/validator/email_validator.dart';
 import 'package:ardoise/model/common/app_error.dart';
 import 'package:ardoise/ui/widget/error_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -33,14 +34,15 @@ class ForgotEmailPage extends StatelessWidget {
                 child:Column(
                     children: [
                       TextFormField(
+                        autocorrect: false,
                         controller: _passwordTextFieldController,
                         decoration: const InputDecoration(
                           labelText: 'email',
-                          prefixIconColor: Colors.blue,
                           prefixIcon: Icon(Icons.mail),
                         ),
+                          validator: (value) => EmailValidator.vaidate(value)
                       ),
-                      const Divider(),
+                      const Divider(thickness: 0),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),

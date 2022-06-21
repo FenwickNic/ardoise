@@ -46,7 +46,7 @@ class _TransactionAmountPageState extends State<TransactionAmountPage>{
                     children: <Widget>[
                       Text("Combien ?",
                         style: Theme.of(context).textTheme.headline6,),
-                      const Divider(height:40),
+                      const Divider(height:40,thickness: 0),
                       TextFormField(
                           onChanged: (value){
                             setState(()

@@ -70,7 +70,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                             }
                             return null;
                           }),
-                      const Divider(),
+                      const Divider(thickness: 0),
                       TextFormField(
                           autocorrect: false,
                           controller: _lastnameTextController,
@@ -84,7 +84,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                             }
                             return null;
                           }),
-                      const Divider(),
+                      const Divider(thickness: 0),
                       TextFormField(
                           autocorrect: false,
                           controller: _emailTextController,
@@ -100,7 +100,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                             return null;
                           }),
                       if(widget.arguments.user != null)
-                      const Divider(),
+                      const Divider(thickness: 0),
                       if(widget.arguments.user != null)
                       InkWell(
                         child: const Text(
@@ -129,7 +129,7 @@ class AdminUserDetailsState extends State<AdminUserDetails> {
                           }
                         },
                       ),
-                      const Divider(),
+                      const Divider(thickness: 0),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),

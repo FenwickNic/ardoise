@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
                       style:
                       Theme.of(context).textTheme.headline1,
                     ),
-              Divider(height: 10,color: Colors.transparent,),
+              Divider(height: 10,color: Colors.transparent,thickness: 0),
               Text("Bienvenue ${user.firstname}",
                 style:
                 Theme.of(context).textTheme.headline2,

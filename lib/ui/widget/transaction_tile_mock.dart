@@ -29,7 +29,7 @@ class TransactionTileMock extends StatelessWidget {
                                     height:20,
                                     width:100,
                                     color: Colors.grey[350],
-                                  ),const Divider(height: 5,),
+                                  ),const Divider(height: 5,thickness: 0),
                                   Container(
                                       height:20,
                                       width:150,

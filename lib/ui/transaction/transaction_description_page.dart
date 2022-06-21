@@ -49,7 +49,7 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
                             }
                             return null;
                           }),
-                      const Divider(height: 80),
+                      const Divider(height: 80, thickness: 0),
 
                       Text("Description de la transaction: ",
                         style: Theme.of(context).textTheme.headline6,),
@@ -57,7 +57,7 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
                         maxLines: 5,
                         controller: _descriptionTextController,
                       ),
-                      const Divider(height: 80),
+                      const Divider(height: 80, thickness: 0),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),

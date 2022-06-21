@@ -56,10 +56,10 @@ class TransactionDetails extends StatelessWidget {
                 ),
               )
           ),
-          const Divider(),
+          const Divider(thickness: 0),
           Text("Libellé de l'opération" , style: Theme.of(context).textTheme.headline6),
           Text(transaction.title),
-          const Divider(),
+          const Divider(thickness: 0),
           Text("Description", style: Theme.of(context).textTheme.headline6),
           Text(transaction.description),
         ]

@@ -18,8 +18,8 @@ class AppDrawer extends StatelessWidget {
           children: [
             DrawerHeader(
 
-              decoration: const BoxDecoration(
-                  color: Colors.blue),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor),
               child: InkWell(
                 child: Text(user.fullname,
                     style:Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white)),

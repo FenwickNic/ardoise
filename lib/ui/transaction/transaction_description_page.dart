@@ -25,7 +25,15 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+        onTap: () {
+      FocusScopeNode currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
+    },
+
+      child: Scaffold(
         appBar: AppBar(
             title: const Text("Description")
         ),
@@ -33,12 +41,8 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
             key: _formKey,
             child: Padding(
                 padding: const EdgeInsets.all(20),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
+                child: ListView(
                     children: <Widget>[
-
                       Text("Titre de la transaction:",
                         style: Theme.of(context).textTheme.headline6,),
                       TextFormField(
@@ -91,7 +95,6 @@ class _TransactionDescritpionPageState extends State<TransactionDescritpionPage>
                     ]
                 ))
         )
-    );
-
+    ));
   }
 }

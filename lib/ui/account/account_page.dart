@@ -77,7 +77,6 @@ class _AccountPageState extends State<AccountPage>  with SingleTickerProviderSta
               if(snapshot.connectionState == ConnectionState.done){
                 return FloatingActionButton(
                     onPressed: () {
-                      print(snapshot.data!.balance.toString());
                       Navigator.pushNamed(context,
                           '/transaction/type',
                           arguments: TransactionTypePageArguments(user: widget.arguments.user, account: snapshot.data!));
@@ -88,7 +87,10 @@ class _AccountPageState extends State<AccountPage>  with SingleTickerProviderSta
               return Container();
             })
         ,
-        body: Builder(
+        backgroundColor: Theme.of(context).primaryColor,
+        body:
+        
+        Builder(
             builder: (context) =>
                 ListView(
                     children: [

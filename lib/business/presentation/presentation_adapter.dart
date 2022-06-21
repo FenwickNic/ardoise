@@ -5,103 +5,103 @@ import 'package:ardoise/model/firebase/fund_user.dart';
 import 'package:ardoise/model/viewmodel/transactionlist_viewmodel.dart';
 import 'package:flutter/material.dart';
 
-class PresentationAdapter{
-  static Future<List<TransactionListViewModel>> fetchTransactionList(FundUser user, Account account){
+class PresentationAdapter {
+
+  static Future<List<TransactionListViewModel>> fetchTransactionList(FundUser user, Account account) {
     List<TransactionListViewModel> transactions = [];
     FirebaseAdapter database = FirebaseAdapter();
 
-    return database.fetchPaidTransactionList(account).then(
-        (transactionLogs) async {
-          List<Account> allAccounts = [];
-          await database.fetchAccountList().then(
-                  (accounts) => allAccounts = accounts
-          );
+    return database
+        .fetchPaidTransactionList(account)
+        .then((transactionLogs) async {
+      List<Account> allAccounts = [];
+      await database
+          .fetchAccountList()
+          .then((accounts) => allAccounts = accounts);
 
-          //On initialise la date et la liste de Tiles.
-          DateTime tempDate = DateTime.now();
-          List<TransactionTileViewModel> tileList = [];
-          // On récupère le transaction Logs
-          for (var transactionLog in transactionLogs)  {
-            //On ajoute les Tile dans le cas où la date aurait changée.
-            if(tempDate.day != transactionLog.date.day ||
-                tempDate.month != transactionLog.date.month ||
-                tempDate.year != transactionLog.date.year){
-              if(!tileList.isEmpty){
-                TransactionListViewModel viewModel = TransactionListViewModel(
-                    date: tempDate,
-                    transactions: tileList);
-                transactions.add(viewModel);
-              }
-              //On réinitialise les indexes.
-              tileList = [];
-              tempDate = transactionLog.date;
-            }
-
-            //On récupère les informations de la base de donnée.
-            await database.fetchTransaction(transactionLog).then(
-                    (transaction) {
-                      TransactionTileViewModel tile = TransactionTileViewModel
-                        (
-                        user: user,
-                          currentAccount: account,
-                          transactionId: transaction.documentId,
-                          title: transaction.title,
-                          accountFrom: allAccounts.firstWhere((element) {
-                             return transaction.accountFrom == element.documentId;
-                          }).accountName,
-                          accountTo: allAccounts.firstWhere((element) {
-                            return transaction.accountTo == element.documentId;
-                          }, orElse: () => Account.unknown()).accountName,
-                          amount: transactionLog.amount,
-                          newBalance: transactionLog.newBalance);
-                      tileList.add(tile);
-                    });
-          }
-          if(!tileList.isEmpty){
-
+      //On initialise la date et la liste de Tiles.
+      DateTime tempDate = DateTime.now();
+      List<TransactionTileViewModel> tileList = [];
+      // On récupère le transaction Logs
+      for (var transactionLog in transactionLogs) {
+        //On ajoute les Tile dans le cas où la date aurait changée.
+        if (tempDate.day != transactionLog.date.day ||
+            tempDate.month != transactionLog.date.month ||
+            tempDate.year != transactionLog.date.year) {
+          if (!tileList.isEmpty) {
             TransactionListViewModel viewModel = TransactionListViewModel(
-                date: tempDate,
-                transactions: tileList);
+                date: tempDate, transactions: tileList);
             transactions.add(viewModel);
           }
-          return transactions;
+          //On réinitialise les indexes.
+          tileList = [];
+          tempDate = transactionLog.date;
         }
-    );
+
+        //On récupère les informations de la base de donnée.
+        await database.fetchTransaction(transactionLog).then((transaction) {
+          TransactionTileViewModel tile = TransactionTileViewModel(
+              user: user,
+              currentAccount: account,
+              transactionId: transaction.documentId,
+              description: transaction.description,
+              title: transaction.title,
+              accountFrom: allAccounts.firstWhere((element) {
+                return transaction.accountFrom == element.documentId;
+              }).accountName,
+              accountTo: allAccounts.firstWhere((element) {
+                return transaction.accountTo == element.documentId;
+              }, orElse: () => Account.unknown()).accountName,
+              amount: transactionLog.amount,
+              newBalance: transactionLog.newBalance);
+          tileList.add(tile);
+        });
+      }
+      if (!tileList.isEmpty) {
+        TransactionListViewModel viewModel =
+            TransactionListViewModel(date: tempDate, transactions: tileList);
+        transactions.add(viewModel);
+      }
+      return transactions;
+    });
   }
 
-  static Future<List<TransactionTileViewModel>> fetchPendingTransactionList(FundUser user, Account account) async{
+  static Future<List<TransactionTileViewModel>> fetchPendingTransactionList(
+      FundUser user, Account account) async {
     List<TransactionTileViewModel> transactions = [];
     FirebaseAdapter database = FirebaseAdapter();
 
     List<Account> allAccounts = [];
-    await database.fetchAccountList().then(
-            (accounts) => allAccounts = accounts
-    );
+    await database
+        .fetchAccountList()
+        .then((accounts) => allAccounts = accounts);
 
-    return database.fetchPendingTransactionList(account).then(
-        (transactionList) {
-          transactionList.forEach((transaction) {
-            TransactionTileViewModel transactionViewModel = TransactionTileViewModel(
-              user: user,
-                currentAccount: account,
-                title: transaction.title,
-                accountFrom: allAccounts.firstWhere((element) {
-                  return transaction.accountFrom == element.documentId;
-                }, orElse: () => Account.unknown()).accountName,
-                accountTo: allAccounts.firstWhere((element) {
-                  return transaction.accountTo == element.documentId;
-                }, orElse: () => Account.unknown()).accountName,
-                amount: -transaction.amount,
-                description: transaction.description,
-                transactionId: transaction.documentId,
-                newBalance: account.balance + transaction.amount,
-                requiresValidation: (transaction.approvalStatus == ETransactionApprovalStatus.Pending),
-            );
+    return database
+        .fetchPendingTransactionList(account)
+        .then((transactionList) {
+      transactionList.forEach((transaction) {
+        TransactionTileViewModel transactionViewModel =
+            TransactionTileViewModel(
+          user: user,
+          currentAccount: account,
+          title: transaction.title,
+          accountFrom: allAccounts.firstWhere((element) {
+            return transaction.accountFrom == element.documentId;
+          }, orElse: () => Account.unknown()).accountName,
+          accountTo: allAccounts.firstWhere((element) {
+            return transaction.accountTo == element.documentId;
+          }, orElse: () => Account.unknown()).accountName,
+          amount: -transaction.amount,
+          description: transaction.description,
+          transactionId: transaction.documentId,
+          newBalance: account.balance + transaction.amount,
+          requiresValidation: (transaction.approvalStatus ==
+              ETransactionApprovalStatus.Pending),
+        );
 
-            transactions.add(transactionViewModel);
-          });
-          return transactions;
-        }
-    );
+        transactions.add(transactionViewModel);
+      });
+      return transactions;
+    });
   }
 }

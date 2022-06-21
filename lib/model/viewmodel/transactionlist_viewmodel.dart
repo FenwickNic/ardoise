@@ -2,16 +2,14 @@ import 'package:ardoise/model/firebase/account.dart';
 import 'package:ardoise/model/firebase/enum_transaction_status.dart';
 import 'package:ardoise/model/firebase/fund_user.dart';
 
-class TransactionListViewModel{
+class TransactionListViewModel {
   DateTime date;
   List<TransactionTileViewModel> transactions;
 
-  TransactionListViewModel({
-    required this.date,
-    required this.transactions});
+  TransactionListViewModel({required this.date, required this.transactions});
 }
 
-class TransactionTileViewModel{
+class TransactionTileViewModel {
   FundUser user;
   Account currentAccount;
   String transactionId;
@@ -25,16 +23,15 @@ class TransactionTileViewModel{
   bool requiresValidation;
 
   TransactionTileViewModel(
-      {
-        required this.user,
-        required this.currentAccount,
-        this.transactionId = "",
-        required this.title,
-        this.description = '',
-        required this.accountFrom,
-        required this.accountTo,
-        required this.amount,
-        this.newBalance,
-        this.requiresValidation = false
-      }) : this.isCredit = (amount >= 0);
+      {required this.user,
+      required this.currentAccount,
+      this.transactionId = "",
+      required this.title,
+      this.description = '',
+      required this.accountFrom,
+      required this.accountTo,
+      required this.amount,
+      this.newBalance,
+      this.requiresValidation = false})
+      : this.isCredit = (amount >= 0);
 }

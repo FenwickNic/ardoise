@@ -22,27 +22,28 @@ class _SignInPageState extends State<SignInPage> {
   FirebaseAdapter transactionAdapter = FirebaseAdapter();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
-    if(FirebaseAuth.instance.currentUser != null){
-      transactionAdapter.fetchUserById(FirebaseAuth.instance.currentUser!.uid)
-          .then(
-              (value) {
-            if (value.administrator) {
-              Navigator.pushNamed(
-                  context, '/admin/users');
-            } else {
-              Navigator.pushNamed(context,
-                '/home',
-                arguments: value,);
-            }
-          });
+    if (FirebaseAuth.instance.currentUser != null) {
+      transactionAdapter
+          .fetchUserById(FirebaseAuth.instance.currentUser!.uid)
+          .then((value) {
+        if (value.administrator) {
+          Navigator.pushNamed(context, '/admin/users');
+        } else {
+          Navigator.pushNamed(
+            context,
+            '/home',
+            arguments: value,
+          );
+        }
+      });
     }
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _emailTextController.dispose();
     _passwordTextController.dispose();
     super.dispose();
@@ -50,135 +51,177 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.only(bottom: 80),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded( child: Container(
-                      padding: const EdgeInsets.only(left: 40, right: 40, bottom: 60),
-                      color: Theme.of(context).colorScheme.primary,
-                      height: 200,
-                      alignment: AlignmentDirectional.bottomCenter,
-                      child: Image.asset('assets/img/ardoise_logo_darkblue.png')
-                  )),
-                  Form(
-                      key: _formKey,
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                TextFormField(
-                                    autocorrect: false,
-                                    controller: _emailTextController,
-                                    decoration: const InputDecoration (
-                                      hintText: '',
-                                      labelText: 'email',
-                                      prefixIcon: Icon(Icons.mail),
+    return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Scaffold(
+            body: Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Expanded(
+                          child: Container(
+                              padding: const EdgeInsets.only(
+                                  left: 40, right: 40, bottom: 60),
+                              color: Theme.of(context).colorScheme.primary,
+                              height: 200,
+                              alignment: AlignmentDirectional.bottomCenter,
+                              child: Image.asset(
+                                  'assets/img/ardoise_logo_darkblue.png'))),
+                      Form(
+                          key: _formKey,
+                          child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 40),
+                              child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    TextFormField(
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        autocorrect: false,
+                                        controller: _emailTextController,
+                                        decoration: const InputDecoration(
+                                          hintText: '',
+                                          labelText: 'email',
+                                          prefixIcon: Icon(Icons.mail),
+                                        ),
+                                        validator: (value) =>
+                                            EmailValidator.vaidate(value)),
+                                    const Divider(
+                                      thickness: 0,
+                                      color: Colors.transparent
                                     ),
-                                    validator: (value) => EmailValidator.vaidate(value)),
-                                const Divider(),
-                                TextFormField(
-                                    obscureText: true,
-                                    controller: _passwordTextController,
-                                    decoration: const InputDecoration (
-                                      hintText: '',
-                                      labelText: 'Password',
-                                      prefixIcon: Icon(Icons.vpn_key),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Entrez votre mot de passe';
-                                      }
-                                      return null;
-                                    }),
-                                const Divider(),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                    ),
-                                    child: const Text('Se connecter',
-                                      style: TextStyle(
-                                          fontSize: 20
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      if (_formKey.currentState!.validate()) {
-                                        User? user;
-                                        try {
-                                          user = await FireAuth
-                                              .signInUsingEmailPassword(
-                                            email: _emailTextController.text,
-                                            password: _passwordTextController.text,
-                                          );
-                                        }on AppError catch(e){
-                                          if(e.severity == ESeverityLevel.Error){
-                                            _passwordTextController.text = "";
-                                            ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(error: e));
-                                            return;
-                                          }else{
-                                            Navigator.pushNamed(context, '/error', arguments: e);
+                                    TextFormField(
+                                        obscureText: true,
+                                        controller: _passwordTextController,
+                                        decoration: const InputDecoration(
+                                          hintText: '',
+                                          labelText: 'Password',
+                                          prefixIcon: Icon(Icons.vpn_key),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Entrez votre mot de passe';
                                           }
-                                        }catch(e){
-                                          AppError error = AppError(
-                                              message: "Erreur",
-                                              description: e.toString());
-                                          Navigator.pushNamed(context, '/error', arguments: error);
-                                        }
-                                        if (user != null) {
-                                          try {
-                                            transactionAdapter.fetchUserById(
-                                                user.uid).then(
-                                                    (value) {
-                                                  if (value.administrator) {
-                                                    Navigator.pushNamed(
-                                                        context, '/admin/users');
-                                                  } else {
-                                                    Navigator.pushNamed(context,
-                                                      '/home',
-                                                      arguments: value,);
-                                                  }
-                                                }
-                                            );
-                                          }on AppError catch(e){
-                                            if(e.severity == ESeverityLevel.Error){
-                                              ScaffoldMessenger.of(context).showSnackBar(ErrorSnackBar(error: e));
-                                              return;
-                                            }else{
-                                              Navigator.pushNamed(context, '/error', arguments: e);
+                                          return null;
+                                        }),
+                                    const Divider(
+                                        thickness: 0,
+                                        color: Colors.transparent
+                                    ),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                        ),
+                                        child: const Text(
+                                          'Se connecter',
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        onPressed: () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            User? user;
+                                            try {
+                                              user = await FireAuth
+                                                  .signInUsingEmailPassword(
+                                                email:
+                                                    _emailTextController.text,
+                                                password:
+                                                    _passwordTextController
+                                                        .text,
+                                              );
+                                            } on AppError catch (e) {
+                                              if (e.severity ==
+                                                  ESeverityLevel.Error) {
+                                                _passwordTextController.text =
+                                                    "";
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(ErrorSnackBar(
+                                                        error: e));
+                                                return;
+                                              } else {
+                                                Navigator.pushNamed(
+                                                    context, '/error',
+                                                    arguments: e);
+                                              }
+                                            } catch (e) {
+                                              AppError error = AppError(
+                                                  message: "Erreur",
+                                                  description: e.toString());
+                                              Navigator.pushNamed(
+                                                  context, '/error',
+                                                  arguments: error);
                                             }
-                                          }catch(e,stack){
-                                            AppError error = AppError(
-                                                message: "Erreur",
-                                                description: e.toString());
-                                            Navigator.pushNamed(context, '/error', arguments: error);
+                                            if (user != null) {
+                                              try {
+                                                transactionAdapter
+                                                    .fetchUserById(user.uid)
+                                                    .then((value) {
+                                                  if (value.administrator) {
+                                                    Navigator.pushNamed(context,
+                                                        '/admin/users');
+                                                  } else {
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      '/home',
+                                                      arguments: value,
+                                                    );
+                                                  }
+                                                });
+                                              } on AppError catch (e) {
+                                                if (e.severity ==
+                                                    ESeverityLevel.Error) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                          ErrorSnackBar(
+                                                              error: e));
+                                                  return;
+                                                } else {
+                                                  Navigator.pushNamed(
+                                                      context, '/error',
+                                                      arguments: e);
+                                                }
+                                              } catch (e, stack) {
+                                                AppError error = AppError(
+                                                    message: "Erreur",
+                                                    description: e.toString());
+                                                Navigator.pushNamed(
+                                                    context, '/error',
+                                                    arguments: error);
+                                              }
+                                              //L'utilisateur n'existe pas
+                                            }
                                           }
-                                          //L'utilisateur n'existe pas
-                                        }
-                                      }
-                                    }
-                                ),
-                                const Divider(),
-                                InkWell(
-                                  child: const Text(
-                                    "J'ai oublié mon mot de passe",
-                                    style: TextStyle(color: Colors.blue),
-                                    textAlign: TextAlign.center,),
-                                  onTap: () {
-                                    Navigator.pushNamed(context, '/forgot-email');
-                                  },
-                                ),//Text('Test'),
-                              ]
-                          )
-                      )
-                  ),
-                ]
-            ))
-    );
+                                        }),
+                                    const Divider(
+                                        thickness: 0,
+                                        color: Colors.transparent
+                                    ),
+                                    InkWell(
+                                      child: const Text(
+                                        "J'ai oublié mon mot de passe",
+                                        style: TextStyle(color: Colors.blue),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/forgot-email');
+                                      },
+                                    ), //Text('Test'),
+                                  ]))),
+                    ]))));
   }
 }

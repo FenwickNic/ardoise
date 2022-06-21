@@ -95,12 +95,12 @@ class FirebaseAdapter extends IAccountPort{
       }
 
       //Mettre à jour le crédit sur le compte bancaire du créancier
-      double oldBalanceFrom = (snapshotFrom.data() as Map<String, dynamic>)['balance'];
+      double oldBalanceFrom = (snapshotFrom.data() as Map<String, dynamic>)['balance'].toDouble();
       double newBalanceFrom = oldBalanceFrom - transaction.amount;
       fireTransaction.update(docAccountFrom, {'balance': newBalanceFrom});
 
       //Mettre à jour le compte du créditeur
-      double oldBalanceTo = (snapshotTo.data() as Map<String, dynamic>)['balance'];
+      double oldBalanceTo = (snapshotTo.data() as Map<String, dynamic>)['balance'].toDouble();
       double newBalanceTo = oldBalanceTo + transaction.amount;
       fireTransaction.update(docAccountTo, {'balance': newBalanceTo});
 

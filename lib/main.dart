@@ -58,9 +58,7 @@ class MonArdoiseApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         supportedLocales: [Locale('fr', 'FR')],
         locale: Locale('fr', 'FR'),
         title: 'Flutter Demo',

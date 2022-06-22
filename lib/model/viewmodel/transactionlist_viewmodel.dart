@@ -21,10 +21,12 @@ class TransactionTileViewModel {
   double amount;
   double? newBalance;
   bool requiresValidation;
+  DateTime submissionDate;
 
   TransactionTileViewModel(
       {required this.user,
       required this.currentAccount,
+      required this.submissionDate,
       this.transactionId = "",
       required this.title,
       this.description = '',

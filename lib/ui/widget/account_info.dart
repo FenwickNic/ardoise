@@ -12,7 +12,7 @@ class AccountInfo extends StatelessWidget {
       Container(
           color: Theme.of(context).primaryColor,
           alignment: Alignment.center,
-          padding: const EdgeInsets.only(top:20, bottom:20),
+          padding: const EdgeInsets.only(top:20, bottom:0),
           child:
           Column(
               children: [

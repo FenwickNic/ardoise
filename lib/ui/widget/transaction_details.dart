@@ -57,6 +57,9 @@ class TransactionDetails extends StatelessWidget {
               )
           ),
           const Divider(thickness: 0),
+          Text("Effectuée le" , style: Theme.of(context).textTheme.headline6),
+          Text(StringAdapter.formatDateTimeLong(context, transaction.submissionDate)),
+          const Divider(thickness: 0),
           Text("Libellé de l'opération" , style: Theme.of(context).textTheme.headline6),
           Text(transaction.title),
           const Divider(thickness: 0),

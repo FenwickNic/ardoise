@@ -14,4 +14,9 @@ class StringAdapter{
     Locale locale = Localizations.localeOf(context);
     return DateFormat("EEE d MMM yyyy",locale.languageCode).format(date);
   }
+
+  static String formatDateTimeLong(BuildContext context, DateTime date) {
+    Locale locale = Localizations.localeOf(context);
+    return DateFormat("EEE d MMM yyyy HH:mm:ss",locale.languageCode).format(date);
+  }
 }

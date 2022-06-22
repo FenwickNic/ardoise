@@ -36,6 +36,7 @@ class TransactionSummaryPage extends StatelessWidget {
                           TransactionDetails(
                               transaction: TransactionDetailsViewModel(
                             currentAccount: transaction.currentAccount,
+                            submissionDate: DateTime.now(),
                             user: transaction.user,
                             title: transaction.title,
                             amount: transaction.amount,

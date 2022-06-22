@@ -43,6 +43,7 @@ class PresentationAdapter {
           TransactionTileViewModel tile = TransactionTileViewModel(
               user: user,
               currentAccount: account,
+              submissionDate: transaction.submissionDate,
               transactionId: transaction.documentId,
               description: transaction.description,
               title: transaction.title,
@@ -83,6 +84,7 @@ class PresentationAdapter {
         TransactionTileViewModel transactionViewModel =
             TransactionTileViewModel(
           user: user,
+          submissionDate: transaction.submissionDate,
           currentAccount: account,
           title: transaction.title,
           accountFrom: allAccounts.firstWhere((element) {

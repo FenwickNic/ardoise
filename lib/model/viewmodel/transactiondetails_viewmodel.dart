@@ -13,20 +13,22 @@ class TransactionDetailsViewModel {
   String accountFrom = "";
   String accountTo = "";
   double amount;
+  DateTime submissionDate;
   bool requiresValidation;
 
-  TransactionDetailsViewModel(
-      {required this.user,
-      required this.currentAccount,
-      this.transactionId = "",
-      required this.accountFrom,
-      required this.accountTo,
-      required this.amount,
-      required this.title,
-      required this.description,
-      this.requiresValidation = false});
+  TransactionDetailsViewModel({required this.user,
+    required this.currentAccount,
+    this.transactionId = "",
+    required this.accountFrom,
+    required this.accountTo,
+    required this.amount,
+    required this.title,
+    required this.description,
+    required this.submissionDate,
+    this.requiresValidation = false});
 
-  factory TransactionDetailsViewModel.fromTransactionTile(TransactionTileViewModel tile) {
+  factory TransactionDetailsViewModel.fromTransactionTile(
+      TransactionTileViewModel tile) {
     return TransactionDetailsViewModel(
         currentAccount: tile.currentAccount,
         user: tile.user,
@@ -36,6 +38,7 @@ class TransactionDetailsViewModel {
         amount: tile.amount,
         title: tile.title,
         description: tile.description,
+        submissionDate: tile.submissionDate,
         requiresValidation: tile.requiresValidation);
   }
 }

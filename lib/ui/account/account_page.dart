@@ -85,12 +85,8 @@ class _AccountPageState extends State<AccountPage>  with SingleTickerProviderSta
                 );
               }
               return Container();
-            })
-        ,
-        backgroundColor: Theme.of(context).primaryColor,
-        body:
-        
-        Builder(
+            }),
+        body: Builder(
             builder: (context) =>
                 ListView(
                     children: [
@@ -120,6 +116,7 @@ class _AccountPageState extends State<AccountPage>  with SingleTickerProviderSta
                         controller: _tabController,
                         labelColor: Theme.of(context).primaryColor,
                         indicatorColor: Theme.of(context).primaryColor,
+                        indicatorWeight: 2,
                         tabs: tabs,
                         onTap: (int index) {
                           setState(() {

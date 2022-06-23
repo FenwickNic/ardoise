@@ -8,13 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main(){
     group('Testing Transactions', () {
       test("Inserting a transaction", () async{
-        WidgetsFlutterBinding.ensureInitialized();
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
-        FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-        FirebaseAdapter adapter = FirebaseAdapter();
-          expect(true, true);
-        });
-        });
+
+      });
+    });
 }

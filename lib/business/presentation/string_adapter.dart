@@ -1,12 +1,15 @@
 import 'dart:ui';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 class StringAdapter{
   static String formatCurrency(BuildContext context, double value){
-    Locale locale = Localizations.localeOf(context);
-    NumberFormat currencyFormatter = NumberFormat.simpleCurrency(locale: locale.languageCode,decimalDigits: 2);
+    NumberFormat currencyFormatter = NumberFormat.simpleCurrency(
+        locale: Platform.localeName,
+        name: "€",
+        decimalDigits: 2);
     return currencyFormatter.format(value);
   }
 

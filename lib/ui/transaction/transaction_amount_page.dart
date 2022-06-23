@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ardoise/business/presentation/decimal_text_input_formatter.dart';
 import 'package:ardoise/ui/transaction/transaction_page_arguments.dart';
 import 'package:flutter/material.dart';
@@ -72,12 +74,16 @@ class _TransactionAmountPageState extends State<TransactionAmountPage>{
 
                             //border: InputBorder.none,
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
+                          validator: (stringValue) {
+                            if (stringValue == null || stringValue.isEmpty) {
                               return 'Vous devez spécifier un montant';
                             }
                             try {
-                              double stringValue = NumberFormat().parse(value) as double;
+                              var currentLocale = Localizations.localeOf(context);
+                              double value = NumberFormat("#.##",Platform.localeName).parse(stringValue) as double;
+                              if(value > 1000) {
+                                return "Montant trop élevé";
+                              }
                             } catch (exception) {
                               return "Montant invalide";
                             }
@@ -99,7 +105,7 @@ class _TransactionAmountPageState extends State<TransactionAmountPage>{
                             if (_formKey.currentState!.validate()) {
 
                               String stringAmount = _amountTextController.text;
-                              double? amount = NumberFormat().parse(stringAmount) as double?;
+                              double amount = NumberFormat("#.##",Platform.localeName).parse(stringAmount) as double;
 
                               if(amount != null){
                                 TransactionDescriptionPageArguments transaction = TransactionDescriptionPageArguments(

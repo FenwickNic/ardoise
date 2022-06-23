@@ -12,9 +12,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'firebase_email_adapter.dart';
+
 class FirebaseAdapter extends IAccountPort{
 
   final FirebaseFirestore _database = FirebaseFirestore.instance;
+  FirebaseEmailAdapter _email = FirebaseEmailAdapter();
   FirebaseAdapter();
 
   ///
@@ -119,6 +122,9 @@ class FirebaseAdapter extends IAccountPort{
           amount: transaction.amount,
           newBalance: newBalanceTo);
       _database.collection('transaction_log').add(logTo.toMap());
+    }).then((value) {
+      //Envoyer un email
+      _email.sendTransactionConfirmedEmail(transaction);
     }).onError((e, stackTrace) async{
       await Sentry.captureException(
         e,
@@ -153,6 +159,7 @@ class FirebaseAdapter extends IAccountPort{
   Future<void> _claimFund(FundTransaction transaction) async {
     try {
       _database.collection('transaction').add(transaction.toMap());
+      _email.sendTransactionPendingEmail(transaction);
     }    catch(e, stack) {
       await Sentry.captureException(
         e,
@@ -169,10 +176,15 @@ class FirebaseAdapter extends IAccountPort{
   @override
   Future<void> cancelTransfer(String transactionId) async{
     try {
-      _database.collection('transaction').doc(transactionId)
-          .update(
-          {"approval_status": ETransactionApprovalStatus.Cancelled.index});
-    }    catch(e, stack){
+      var transactionQuery = _database.collection('transaction').doc(transactionId);
+      await transactionQuery.update(
+          {"approval_status": ETransactionApprovalStatus.Cancelled.index}
+      );
+      transactionQuery.get().then((value) {
+        FundTransaction transaction = FundTransaction.fromMap(value);
+        _email.sendTransactionCancelledEmail(transaction);
+      });
+    } catch(e, stack){
       await Sentry.captureException(
         e,
         stackTrace: stack,
@@ -269,7 +281,10 @@ class FirebaseAdapter extends IAccountPort{
           .collection("transaction")
           .doc(transactionLog.transactionId)
           .get()
-          .then((transaction) => FundTransaction.fromMap(transaction));
+          .then((transaction)  {
+            FundTransaction fundTransaction = FundTransaction.fromMap(transaction);
+            return fundTransaction;
+          });
     }    catch(e, stack){
       await Sentry.captureException(
         e,
